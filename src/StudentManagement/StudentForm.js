@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import axios from "axios";
 import { createStudent } from "../action/studentAction";
 import { UpdateStudent } from "../action/studentAction";
+import isEmpty from "validator/lib/isEmpty";
 
 class StudentForm extends Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class StudentForm extends Component {
         hoten: "",
         sdt: "",
         email: "",
+        loi: "",
       },
     };
   }
@@ -31,7 +33,26 @@ class StudentForm extends Component {
     });
   };
 
+  validateAll = () => {
+    const msg = {};
+
+    if (isEmpty(this.state.values.masv)) {
+      this.state.values.masv = "Please input your Email";
+    }
+
+    // if (isEmpty(password)) {
+    //   msg.password = "Please input your Password";
+    // }
+
+    this.setState({ loi: msg });
+    if (Object.keys(msg).length > 0) return false;
+    return true;
+  };
+
   handleSubmit = (e) => {
+    const isValid = this.validateAll();
+    if (!isValid) return;
+
     e.preventDefault();
 
     const { id, ...student } = this.state.values;
@@ -68,9 +89,7 @@ class StudentForm extends Component {
                 onChange={this.handleChange}
               />
 
-              <span id="spanMasv" style={{ display: "none" }}>
-                o
-              </span>
+              <span id="spanMasv">{this.state.loi}</span>
             </div>
 
             <div className="mb-3">

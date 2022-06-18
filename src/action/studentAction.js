@@ -9,7 +9,7 @@ export const getStudent = () => {
         "https://62abd0e7bd0e5d29af15943d.mockapi.io/Student",
         {
           params: {
-            name: searchValue,
+            hoten: searchValue,
           },
         }
       );
