@@ -14,6 +14,9 @@ class StudentItem extends Component {
         <td style={{ textAlign: "left", with: "25%" }}>{item.email}</td>
         <td>
           <button
+            style={{
+              marginRight: "10px",
+            }}
             className="btn btn-success"
             onClick={() => {
               getDetail(item);

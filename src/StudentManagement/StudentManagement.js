@@ -18,6 +18,7 @@ class StudentManagement extends Component {
   render() {
     return (
       <div className="container">
+        <h2 style={{ margin: "20px " }}>Quản lý sinh viên</h2>
         <StudentForm />
         <SearchStudent></SearchStudent>
         <StudentList />

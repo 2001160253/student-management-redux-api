@@ -16,6 +16,9 @@ class SearchStudent extends Component {
     return (
       <div className="d-flex justify-content-end mt-5">
         <input
+          style={{
+            marginRight: "20px",
+          }}
           type="text"
           className="form-control"
           placeholder="Search student name"

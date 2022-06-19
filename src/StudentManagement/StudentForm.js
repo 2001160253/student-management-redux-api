@@ -15,13 +15,46 @@ class StudentForm extends Component {
         hoten: "",
         sdt: "",
         email: "",
-        loi: "",
+      },
+      errors: {
+        masv: "",
+        hoten: "",
+        sdt: "",
+        email: "",
       },
     };
   }
 
   handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, pattern } = e.target;
+
+    let erorrMessage = "";
+
+    //kiemt tra rong
+    if (value.trim() === "") {
+      erorrMessage = name + " khong duoc bo trong";
+    }
+    //kiem tra masv
+    if (name === "masv") {
+      const regex = new RegExp(pattern);
+      if (!regex.test(value)) {
+        erorrMessage = "Mã sinh viên là ký tự số, tối đa 10 ký tự";
+      }
+    }
+    //kiem tra so dien thoai
+    if (name === "sdt") {
+      const regex = new RegExp(pattern);
+      if (!regex.test(value)) {
+        erorrMessage = "Số điện thoại tối đa 10 ký tự";
+      }
+    }
+    //kiem tra email
+    if (type === "email") {
+      const regex = new RegExp(pattern);
+      if (!regex.test(value)) {
+        erorrMessage = "Email không đúng định dạng";
+      }
+    }
 
     this.setState((state) => {
       return {
@@ -29,30 +62,15 @@ class StudentForm extends Component {
           ...state.values,
           [name]: value,
         },
+        errors: {
+          ...state.errors,
+          [name]: erorrMessage,
+        },
       };
     });
   };
 
-  validateAll = () => {
-    const msg = {};
-
-    if (isEmpty(this.state.values.masv)) {
-      this.state.values.masv = "Please input your Email";
-    }
-
-    // if (isEmpty(password)) {
-    //   msg.password = "Please input your Password";
-    // }
-
-    this.setState({ loi: msg });
-    if (Object.keys(msg).length > 0) return false;
-    return true;
-  };
-
   handleSubmit = (e) => {
-    const isValid = this.validateAll();
-    if (!isValid) return;
-
     e.preventDefault();
 
     const { id, ...student } = this.state.values;
@@ -68,33 +86,61 @@ class StudentForm extends Component {
       this.setState({ values: { ...this.props.selectedStudent } });
     }
   }
+  renderButtonSubmit = () => {
+    let valid = true;
+    for (let key in this.state.errors) {
+      if (this.state.errors[key] !== "") {
+        valid = false;
+      }
+    }
 
+    if (valid) {
+      return (
+        <button
+          className="btn btn-success"
+          style={{ width: "300px", margin: "auto", marginTop: "20px" }}
+        >
+          Them sinh vien
+        </button>
+      );
+    } else {
+      return (
+        <button
+          disabled
+          className="btn btn-success"
+          style={{ width: "300px", margin: "auto", marginTop: "20px" }}
+        >
+          Them sinh vien
+        </button>
+      );
+    }
+  };
   render() {
-    const { values } = this.state;
+    const { values, errors } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
         <div className="row">
-          <div className="col-sm-6">
+          <div className="col-sm-6" style={{ textAlign: "left" }}>
             <div className="mb-3">
               <label htmlFor="name" className="form-label">
                 Ma sinh vien
               </label>
               <input
-                type="text"
                 id="masv"
                 className="form-control"
                 name="masv"
                 value={values.masv}
                 onChange={this.handleChange}
+                pattern="^[0-9]{1,10}$"
               />
 
-              <span id="spanMasv">{this.state.loi}</span>
+              <p className="text-danger">{errors.masv}</p>
             </div>
 
-            <div className="mb-3">
+            <div className="mb-3" style={{ textAlign: "left" }}>
               <label htmlFor="description" className="form-label">
-                Description
+                Ho ten
               </label>
               <input
                 type="text"
@@ -104,39 +150,44 @@ class StudentForm extends Component {
                 value={values.hoten}
                 onChange={this.handleChange}
               />
+              <p className="text-danger">{errors.hoten}</p>
             </div>
           </div>
 
-          <div className="col-sm-6">
+          <div className="col-sm-6" style={{ textAlign: "left" }}>
             <div className="mb-3">
               <label htmlFor="image" className="form-label">
                 SDT
               </label>
               <input
-                type="text"
+                pattern="(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b"
+                type="number"
                 id="sdt"
                 className="form-control"
                 name="sdt"
                 value={values.sdt}
                 onChange={this.handleChange}
               />
+              <p className="text-danger">{errors.sdt}</p>
             </div>
-            <div className="mb-3">
+            <div className="mb-3" style={{ textAlign: "left" }}>
               <label htmlFor="price" className="form-label">
                 Email
               </label>
               <input
-                type="text"
+                pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
+                type="email"
                 id="email"
                 className="form-control"
                 name="email"
                 value={values.email}
                 onChange={this.handleChange}
               />
+              <p className="text-danger">{errors.email}</p>
             </div>
           </div>
 
-          <button className="btn btn-success">Them sinh vien</button>
+          {this.renderButtonSubmit()}
         </div>
       </form>
     );
